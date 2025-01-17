@@ -1,0 +1,17 @@
+<div class="sidebar-container">
+    <nav class="menu-root">
+        <ul>
+        <!-- Loop over navigation items using Go template -->
+        {{range .MenuItems}}
+            <li class="menu-item {{if .Active}}active{{end}}">
+                <a href="{{.Href}}" data-hx-target="main-content" data-hx-swap="innerHTML">
+                    <span class="menu-icon">
+                        {{.Icon}}
+                    </span>
+                    <span class="menu-label">{{.Label}}</span>
+                </a>
+            </li>
+        {{end}}
+        </ul>
+    </nav>
+</div>
