@@ -281,7 +281,7 @@ func filterArchived(emails []Email, wantArchived bool) []Email {
 
 func ensureSession(w http.ResponseWriter, r *http.Request) *EmailSession {
 	c, err := r.Cookie("session_id")
-	if true || err != nil || c == nil || c.Value == "" {
+	if err != nil || c == nil || c.Value == "" {
 		sid := generateSessionID()
 		s := &EmailSession{}
 		s.Emails = defaultEmails
