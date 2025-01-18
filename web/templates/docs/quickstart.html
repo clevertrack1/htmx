@@ -1,0 +1,63 @@
+{{ define "quickstart" }}
+<h1>Quickstart</h1>
+
+<p>
+	To get started, first install <a href="https://go.dev/doc/install">Go</a>, and make sure it is accessible from the
+	command line.
+
+	Then, locate <code>goth-ui.zip</code>, and run the following commands.
+</p>
+
+<div class="card my-4">
+	<div class="card-body">
+		<pre class="m-0">> unzip goth-ui.zip</pre>
+		<pre class="m-0">> cd goth-ui</pre>
+	</div>
+</div>
+
+<p>
+	Starting is as simple as:
+</p>
+
+<div class="card my-4">
+	<div class="card-body">
+		<pre class="m-0">> go get</pre>
+		<pre class="m-0">> go run main.go</pre>
+	</div>
+</div>
+<div class="card my-4">
+	<div class="card-body">
+		<pre class="m-0">Listening at localhost:8080</pre>
+	</div>
+</div>
+
+<p>
+	You can then navigate to <code>localhost:8080</code> in your browser. That's it!
+</p>
+
+<p>
+	<a href="https://github.com/air-verse/air">air</a> can also be installed to allow the live reload during
+	development, as shown below.
+</p>
+
+<div class="card my-4">
+	<div class="card-body">
+		<pre class="m-0">> air -- -address 192.168.1.111:8080</pre>
+	</div>
+</div>
+
+<div class="card my-4">
+	<div class="card-body">
+		<pre class="m-0">> air -- -address 192.168.1.111:8080
+web/templates/docs/docbase.html has changed
+building...
+running...
+Listening at 192.168.1.111:8080</pre>
+	</div>
+</div>
+
+<p>Before deployment, make sure to <code>go build main.go</code>. If deploying on a Linux server, I recommend using <a
+		href="https://caddyserver.com/">Caddy</a> to ensure secure HTTPS communication with your deployed app at your
+	registered domain name. </p>
+
+{{ end }}

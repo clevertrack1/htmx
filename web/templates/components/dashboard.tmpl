@@ -1,0 +1,15 @@
+{{ define "dashboard" }}
+<div class="container bg-body rounded border shadow px-4 pb-4 pt-0 fade-in">
+	<div class="row p-0" hx-get="/prices" hx-trigger="every 500ms"></div>
+	<div class="row">
+		<div class="col d-flex pt-4">
+			<div class="card">
+				<div class="card-body" style="min-width: 50vw;">
+					<canvas id="testChart"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	<p class="text-muted float-end">*randomized data*</p>
+</div>
+{{ end }}

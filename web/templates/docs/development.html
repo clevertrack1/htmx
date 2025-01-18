@@ -1,0 +1,164 @@
+{{ define "development" }}
+<h1>Development</h1>
+<p><code>goth-ui</code> follows the structure of a Go web app using <code>net/http</code> and
+	<code>html/template</code>.
+</p>
+
+<h4 class="mt-2"> Project Structure </h4>
+<div class="card mb-4">
+	<div class="card-body">
+		<pre class="m-0">$ tree -L 2
+.
+├── app
+│   └── *.go
+├── go.mod
+├── go.sum
+├── main.go
+├── scss
+└── web
+  ├── public
+  └── templates</pre>
+	</div>
+</div>
+
+<h4 class="mt-2"> Rendering Views </h4>
+<p><code>main.go</code> contains all the code which parses the templates (default in web/templates) into a
+	<code>*template.Template</code>. After parsing, all views and components are available in this struct.
+</p>
+
+<div class="card my-4">
+	<div class="card-body">
+		<pre class="m-0">tmpl, err := template.New("").ParseGlob("web/templates/*/*")</pre>
+	</div>
+</div>
+
+<p>Views are then rendered by adding endpoints to the <code>*http.ServeMux</code>, which is provided an HTTP handler.
+</p>
+
+<div class="card my-4">
+	<div class="card-body">
+		<pre class="m-0">
+mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+  err := tmpl.ExecuteTemplate(w, "index.html", nil)
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+    return
+  }
+})</pre>
+	</div>
+</div>
+
+<h4 class="mt-2"> Structuring Templates </h4>
+<p>Pages are composed of *.html views, which include *.tmpl files with reusable blocks of HTML.</p>
+<p>Consider the prior example to render <code>views/index.html</code> with head and navbar components in
+	<code>components/head.tmpl</code> and <code>components/navbar.tmpl</code>
+</p>
+
+<code>index.html</code>
+<div class="card mb-4">
+	<div class="card-body">
+		<pre class="m-0">
+&lt;head&gt;
+  &lt;title&gt;Home&lt;/title&gt;
+  {{ "{{" }} template "head" . {{ "}}" }}
+&lt;/head&gt;
+
+&lt;body&gt;
+  {{ "{{" }} template "navbar" . {{ "}}" }}
+  ... page content ..
+&lt;/body&gt;</pre>
+	</div>
+</div>
+
+<code>head.tmpl</code>
+<div class="card mb-4">
+	<div class="card-body">
+		<pre class="m-0">
+{{ "{{" }} define "head" {{ "}}" }}
+&lt;meta charset="UTF-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;link rel="stylesheet" href="/public/css/custom.css" /&gt;
+{{ "{{" }} end {{ "}}" }}</pre>
+	</div>
+</div>
+
+<p>This provides the essential requirement of reusing fragments of HTML to compose web pages, without introducing
+	unnecessary complexity. </p>
+
+
+<h4 class="mt-2"> Reactive Components </h4>
+<p>An important aspect of hypermedia apps is rendering standalone components retrieved by an HTTP endpoint. Here is an
+	example rendering a bitcoin ticker.</p>
+
+<code>prices.tmpl</code>
+<div class="card mb-4">
+	<div class="card-body">
+		<pre class="m-0">
+{{ "{{" }} define "prices" {{ "}}" }}
+  &lt;div class="col-12 col-md-4 pt-4"&gt;
+    &lt;div class="card"&gt;
+      &lt;div class="card-header fw-bold"&gt;
+        BTC
+      &lt;/div&gt;
+      &lt;div class="card-body"&gt;
+        {{ "{{" }} .BTC {{ "}}" }}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+{{ "{{" }} end {{ "}}" }}</pre>
+	</div>
+</div>
+
+<p>This template gets parsed into the same <code>*template.Template</code> that we use for rendering views.</p>
+
+<p>We can render this template injected with server data as follows:</p>
+
+<code>dashboard.tmpl</code>
+<div class="card mb-4">
+	<div class="card-body">
+		<pre class="m-0">
+type DashboardApp struct {
+  Tmpl *template.Template
+}
+
+func (d *DashboardApp) RegisterRoutes(mux *http.ServeMux) {
+  mux.HandleFunc("GET /prices", d.renderPrices)
+}
+
+type PricesRender struct {
+  BTC string
+}
+
+func (d *DashboardApp) renderPrices(w http.ResponseWriter, r *http.Request) {
+  data := PricesRender{
+    BTC: getBTC(),
+  }
+  err := d.Tmpl.ExecuteTemplate(w, "prices", data)
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+    return
+  }
+}
+		</pre>
+	</div>
+</div>
+
+<p>Finally, we can use htmx to query this endpoint, and inject the server rendered HTML. </p>
+
+<code>dashboard.html</code>
+<div class="card mb-4">
+	<div class="card-body">
+		<pre class="m-0">&lt;div hx-get=&quot;/prices&quot; hx-trigger=&quot;every 500ms&quot;&gt;&lt;/div&gt;</pre>
+	</div>
+</div>
+
+<p>We've now created a live server rendered price ticker that updates every 500ms. </p>
+
+<h4 class="mt-2"> Beyond </h4>
+<p>We've laid out how to create live hypermedia applications using Go, htmx, and Bootstrap. <code>goth-ui</code>
+	includes this and more complex examples such as an Email client and AI Chat to get you building your app quickly. </p>
+
+<p>Further, you've now opened the door to the expansive backend Go ecosystem, and are ready to start building your
+	custom backend business logic.</p>
+
+{{ end }}

@@ -1,0 +1,45 @@
+{{ define "chat" }}
+<div class="container rounded border d-flex flex-column shadow bg-body p-4 fade-in" style="min-height: 50vh;">
+	<div class="row flex-grow-1 overflow-auto">
+		<div class="col-12">
+			<div id="chat-container" class="d-flex flex-column">
+				<div class="assistant-chat-message align-self-start bg-white text-dark border rounded p-2 mb-2 shadow-sm"
+					style="max-width: 70%;">
+					Hello! How can I help you?
+				</div>
+
+				<!-- Conversation -->
+
+			</div>
+		</div>
+	</div>
+	<!--
+	<div id="spinner" class="htmx-indicator">
+		<div class="spinner-border text-primary" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
+	-->
+	<div class="mt-auto">
+		<form id="chat-form" hx-post="/chat" hx-target="#chat-container" hx-swap="beforeend" hx-trigger="submit">
+			<div class="input-group">
+				<input name="user-message" id="user-message" type="text" class="form-control"
+					placeholder="Type your message...">
+				<button class="btn btn-primary" type="reset">Send</button>
+			</div>
+		</form>
+	</div>
+</div>
+{{ end }}
+
+
+{{ define "chatresponse" }}
+<div class="user-chat-message align-self-end bg-primary text-white border rounded p-2 mb-2 shadow-sm"
+	style="max-width: 70%;">
+	{{ .UserMsg }}
+</div>
+<div class="assistant-chat-message align-self-start bg-white text-dark border rounded p-2 mb-2 shadow-sm"
+	style="max-width: 70%;">
+	{{ .AssistantMsg }}
+</div>
+{{ end }}

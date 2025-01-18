@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+	<title>goth-ui - Docs</title>
+	{{ template "head" . }}
+	<style>
+		.code-block {
+			width: 100%;
+			margin-top: 16px;
+			margin-bottom: 16px;
+		}
+	</style>
+</head>
+
+<body hx-boost="true">
+
+	{{ template "navbar" }}
+
+
+	<div class="container">
+		<div class="row">
+			<!-- Doc hierarchy (left column) -->
+			<div class="col-3 d-none d-lg-block p-4 position-sticky overflow-auto"
+				style="height: calc(100vh - 70px); top: 70px;">
+				{{ template "docnav" dict "Mobile" "false" }}
+			</div>
+			<!-- Main content (center column) -->
+			<div class="col-12 col-lg-8 p-4 border-start border-end">
+				<!-- Mobile popover button -->
+				<button class="btn d-lg-none ms-0 p-0" type="button" data-bs-toggle="offcanvas"
+					data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+					<svg class="bi" fill="currentColor" width="32px" height="32px">
+						<use href="/public/images/bootstrap-icons.svg#arrow-right-square-fill"></use>
+					</svg>
+				</button>
+				<div id="doccontent">
+					{{ if .DocTemplate }}
+					{{ .DocTemplate }}
+					{{ end}}
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Off-canvas mobile menu -->
+	<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="mobileMenuLabel">Documentation</h5>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body">
+			{{ template "docnav" dict "Mobile" "true" }}
+		</div>
+	</div>
+
+	{{ template "searchmodal" }}
+	{{ template "footer" }}
+
+</body>
+
+</html>

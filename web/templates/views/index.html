@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>goth-ui - Home</title>
+	{{ template "head" . }}
+	<link rel="stylesheet" href="/public/css/spotlight.css">
+	<link rel="stylesheet" href="/public/css/bob.css">
+</head>
+
+<body class="bg-body-secondary">
+
+	{{ template "navbar" }}
+
+	<div class="container p-2">
+		<div class="px-4 py-5 my-5 text-center">
+
+			<div class="spotlight"></div>
+			<h1 class="display-5 fw-bold text-body-emphasis">Hero</h1>
+			<div class="col-lg-6 mx-auto">
+				<p class="lead mb-4"> Description
+				</p>
+				<div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+					<a href="#" class="btn btn-primary shadow-sm">Primary</a>
+					<a href="#" class="btn btn-outline-secondary shadow-sm">Secondary</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="container p-4 text-center">
+			<h4 class="fw-bold text-body-emphasis">Try Included Examples</h4>
+			<br>
+			<svg class="mx-auto bob" xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" fill="currentColor"
+				viewBox="0 0 16 16">
+				<use href="/public/images/bootstrap-icons.svg#box-arrow-in-down"></use>
+			</svg>
+		</div>
+
+		<h2 class="fw-bold text-body-emphasis px-2">Email</h2>
+		<div hx-get="/emails" hx-trigger="load" class="fade-in" id="emailView" style="min-height: 75vh;"></div>
+
+		<div class="py-4">
+			<hr>
+		</div>
+
+		<h2 class="fw-bold text-body-emphasis px-2">Dashboard</h2>
+		<div hx-get="/dashboard" hx-trigger="revealed" id="dashboardView" style="min-height: 50vh;"></div>
+
+		<div class="py-4">
+			<hr>
+		</div>
+
+		<h2 class="fw-bold text-body-emphasis px-2">AI Chat</h2>
+		<div hx-get="/chat" hx-trigger="revealed" id="chatView" style="min-height: 50vh;"></div>
+
+		<div class="py-4">
+			<hr>
+		</div>
+
+		<div class="px-4 py-5 my-5 text-center">
+			<div class="spotlight"></div>
+			<h1 class="display-5 fw-bold text-body-emphasis">Ready to start Building?</h1>
+			<a href="https://masoftwarematt.gumroad.com/l/jqhke" class="btn btn-primary shadow-sm mt-2">GET</a>
+		</div>
+
+
+	</div>
+
+	<section class="bg-body-secondary">
+	</section>
+
+	{{ template "searchmodal" }}
+	{{ template "footscripts" }}
+	{{ template "footer" }}
+
+</body>
+
+</html>

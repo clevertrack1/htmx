@@ -1,0 +1,75 @@
+{{ define "pagination" }}
+<article class="my-3" id="pagination">
+	<div class="bd-heading align-self-start mb-3 mt-xl-0 mb-xl-2">
+		<h3>Pagination</h3>
+		<a class="d-flex align-items-center" href="https://getbootstrap.com/docs/5.3/components/pagination/">Documentation</a>
+	</div>
+
+	<div>
+		<div class="bd-example-snippet bd-code-snippet">
+			<div class="bd-example m-0 border-0">
+
+				<nav aria-label="Pagination example">
+					<ul class="pagination pagination-sm">
+						<li class="page-item"><a class="page-link" href="#">1</a></li>
+						<li class="page-item active" aria-current="page">
+							<a class="page-link" href="#">2</a>
+						</li>
+						<li class="page-item"><a class="page-link" href="#">3</a></li>
+					</ul>
+				</nav>
+
+			</div>
+		</div>
+
+
+		<div class="bd-example-snippet bd-code-snippet">
+			<div class="bd-example m-0 border-0">
+
+				<nav aria-label="Standard pagination example">
+					<ul class="pagination">
+						<li class="page-item">
+							<a class="page-link" href="#" aria-label="Previous">
+								<span aria-hidden="true">«</span>
+							</a>
+						</li>
+						<li class="page-item"><a class="page-link" href="#">1</a></li>
+						<li class="page-item"><a class="page-link" href="#">2</a></li>
+						<li class="page-item"><a class="page-link" href="#">3</a></li>
+						<li class="page-item">
+							<a class="page-link" href="#" aria-label="Next">
+								<span aria-hidden="true">»</span>
+							</a>
+						</li>
+					</ul>
+				</nav>
+
+			</div>
+		</div>
+
+
+		<div class="bd-example-snippet bd-code-snippet">
+			<div class="bd-example m-0 border-0">
+
+				<nav aria-label="Another pagination example">
+					<ul class="pagination pagination-lg flex-wrap">
+						<li class="page-item disabled">
+							<a class="page-link">Previous</a>
+						</li>
+						<li class="page-item"><a class="page-link" href="#">1</a></li>
+						<li class="page-item active" aria-current="page">
+							<a class="page-link" href="#">2</a>
+						</li>
+						<li class="page-item"><a class="page-link" href="#">3</a></li>
+						<li class="page-item">
+							<a class="page-link" href="#">Next</a>
+						</li>
+					</ul>
+				</nav>
+
+			</div>
+		</div>
+
+	</div>
+</article>
+{{ end }}

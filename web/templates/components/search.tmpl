@@ -1,0 +1,17 @@
+{{ define "searchresults" }}
+{{ if . }}
+
+{{ range . }}
+<div class="card p-4 m-2 rounded border">
+	<div class="card-title">
+		<h5><a href="{{ .Href }}" hx-disable>{{ .File }}</a></h5>
+	</div>
+	{{ .Highlight }}
+</div>
+{{ end }}
+
+{{ else }}
+No results
+{{ end }}
+
+{{ end }}

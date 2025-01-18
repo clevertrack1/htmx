@@ -1,0 +1,62 @@
+{{ define "popovers" }}
+<article class="my-3" id="popovers">
+	<div class="bd-heading align-self-start mb-3 mt-xl-0 mb-xl-2">
+		<h3>Popovers</h3>
+		<a class="d-flex align-items-center"
+			href="https://getbootstrap.com/docs/5.3/components/popovers/">Documentation</a>
+	</div>
+
+	<div>
+		<div class="bd-example-snippet bd-code-snippet">
+			<div class="bd-example m-0 border-0">
+
+				<button type="button" class="btn btn-lg btn-danger mt-2" data-bs-toggle="popover"
+					data-bs-trigger="focus"
+					data-bs-content="And here's some amazing content. It's very engaging. Right?"
+					data-bs-original-title="Popover title">Click to toggle popover</button>
+
+			</div>
+		</div>
+
+
+		<div class="bd-example-snippet bd-code-snippet">
+			<div class="bd-example m-0 border-0">
+
+				<button type="button" class="btn btn-secondary mt-2" data-bs-container="body" data-bs-toggle="popover"
+					data-bs-trigger="focus" data-bs-placement="top"
+					data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+					Popover on top
+				</button>
+				<button type="button" class="btn btn-secondary mt-2" data-bs-container="body" data-bs-toggle="popover"
+					data-bs-placement="right" data-bs-trigger="focus"
+					data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+					Popover on end
+				</button>
+				<button type="button" class="btn btn-secondary mt-2" data-bs-container="body" data-bs-toggle="popover"
+					data-bs-placement="bottom" data-bs-trigger="focus"
+					data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+					Popover on bottom
+				</button>
+				<button type="button" class="btn btn-secondary mt-2" data-bs-container="body" data-bs-toggle="popover"
+					data-bs-placement="left" data-bs-trigger="focus"
+					data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+					Popover on start
+				</button>
+
+			</div>
+		</div>
+
+	</div>
+</article>
+
+<script>
+	function initPopovers() {
+		const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+		const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+	}
+	initPopovers();
+	document.addEventListener('htmx:afterSwap', () => {
+		initPopovers();
+	});
+</script>
+{{ end }}

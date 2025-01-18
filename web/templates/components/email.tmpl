@@ -1,0 +1,190 @@
+{{ define "emailview" }}
+
+{{ $root := . }}
+
+<div id="emailContainer" class="container rounded border shadow bg-body">
+	<!-- Table Header -->
+	<div class="row border-bottom">
+		<div class="align-items-center d-flex px-0">
+			<div id="emailListButton" class="btn btn-secondary d-none align-items-center m-2 p-2"
+				style="aspect-ratio:1/1;" onclick="showList()">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+					<use href="/public/images/bootstrap-icons.svg#arrow-left"></use>
+				</svg>
+			</div>
+			<div id="emailUserDropdown" class="dropdown p-2">
+				<button class="btn btn-outline-secondary text-start dropdown-toggle shadow-sm w-100" type="button"
+					data-bs-toggle="dropdown" aria-expanded="false">
+					Matt A
+				</button>
+				<ul class="dropdown-menu">
+					<li><a class="dropdown-item" href="https://manders.us">Check out my work</a></li>
+				</ul>
+			</div>
+			<h5 class="fw-bold my-2 ms-2">Mail</h5>
+
+			<div class="btn btn-secondary d-flex align-items-center float ms-auto p-2" style="aspect-ratio:1/1;"
+				hx-post="/emails/{{ .SelectedEmail.Id }}/star?view={{ $root.CurrentView }}" hx-trigger="click"
+				hx-target="#emailView">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+					{{ if .SelectedEmail.Starred }}
+					<use href="/public/images/bootstrap-icons.svg#star-fill"></use>
+					{{ else }}
+					<use href="/public/images/bootstrap-icons.svg#star"></use>
+					{{ end }}
+				</svg>
+			</div>
+
+			<div class="btn btn-secondary d-flex align-items-center m-2 p-2" style="aspect-ratio:1/1;"
+				hx-post="/emails/{{ .SelectedEmail.Id }}/archive?view={{ $root.CurrentView }}" hx-trigger="click"
+				hx-target="#emailView">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive"
+					viewBox="0 0 16 16">
+					{{ if .SelectedEmail.Archived }}
+					<use href="/public/images/bootstrap-icons.svg#archive-fill"></use>
+					{{ else }}
+					<use href="/public/images/bootstrap-icons.svg#archive"></use>
+					{{ end }}
+				</svg>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+
+		<div class="col-2 border-end p-0 d-flex d-none d-lg-flex">
+			<div class="d-flex flex-column flex-shrink-0 p-2 w-100">
+				<ul class="nav nav-pills flex-column mb-auto">
+					<li class="nav-item">
+						<button hx-get="/emails?view=" hx-trigger="click" hx-target="#emailView" href="#"
+							class="btn {{ if eq $root.CurrentView "inbox" }} btn-primary {{ else }} btn-secondary {{
+							end }} fw-semibold w-100 text-start d-flex align-items-center">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+								class="me-2" viewBox="0 0 16 16">
+								<use href="/public/images/bootstrap-icons.svg#inbox-fill"></use>
+							</svg>
+							Inbox
+						</button>
+					</li>
+					<hr>
+					<li class="nav-item">
+						<button hx-get="/emails?view=starred" hx-trigger="click" hx-target="#emailView"
+							class="btn {{ if eq $root.CurrentView "starred" }} btn-primary {{ else }} btn-secondary {{
+							end }} fw-semibold mt-1 w-100 text-start d-flex align-items-center">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+								class="me-2" viewBox="0 0 16 16">
+								<use href="/public/images/bootstrap-icons.svg#star-fill"></use>
+							</svg>
+							Starred
+						</button>
+					</li>
+					<li class="nav-item">
+						<button hx-get="/emails?view=archived" hx-trigger="click" hx-target="#emailView"
+							class="btn {{ if eq $root.CurrentView "archived" }} btn-primary {{ else }} btn-secondary {{
+							end }}fw-semibold mt-1 w-100 text-start d-flex align-items-center">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+								class="bi bi-archive me-2" viewBox="0 0 16 16">
+								<use href="/public/images/bootstrap-icons.svg#archive-fill"></use>
+							</svg>
+							Archive
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="col-auto border-end p-0 d-md-flex d-lg-none">
+			<div class="d-flex flex-column flex-shrink-0 p-2 w-100">
+				<ul class="nav nav-pills flex-column mb-auto">
+					<li class="nav-item">
+						<button hx-get="/emails?view=" hx-trigger="click" hx-target="#emailView" href="#"
+							class="btn {{ if eq $root.CurrentView "inbox" }} btn-primary {{ else }} btn-secondary {{
+							end }} fw-semibold w-100 text-start d-flex align-items-center justify-content-center"
+							style="aspect-ratio: 1 / 1;">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+								viewBox="0 0 24 24">
+								<use href="/public/images/bootstrap-icons.svg#inbox-fill"></use>
+							</svg>
+						</button>
+					</li>
+					<hr>
+					<li class="nav-item">
+						<button hx-get="/emails?view=starred" hx-trigger="click" hx-target="#emailView"
+							class="btn {{ if eq $root.CurrentView "starred" }} btn-primary {{ else }} btn-secondary {{
+							end }} fw-semibold mt-1 w-100 text-start d-flex align-items-center"
+							style="aspect-ratio: 1 / 1;">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+								viewBox="0 0 24 24">
+								<use href="/public/images/bootstrap-icons.svg#star-fill"></use>
+							</svg>
+						</button>
+					</li>
+					<li class="nav-item">
+						<button hx-get="/emails?view=archived" hx-trigger="click" hx-target="#emailView"
+							class="btn {{ if eq $root.CurrentView "archived" }} btn-primary {{ else }} btn-secondary {{
+							end }}fw-semibold mt-1 w-100 text-start d-flex align-items-center"
+							style="aspect-ratio: 1 / 1;">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+								class="bi bi-archive" viewBox="0 0 24 24">
+								<use href="/public/images/bootstrap-icons.svg#archive-fill"></use>
+							</svg>
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div id="emailListPane" class="col border-end p-3 overflow-auto" style="height: 75vh;">
+			<input hx-post="/emails/search?view={{ $root.CurrentView }}" hx-trigger="input changed delay:500ms, search"
+				hx-target="#emailList" name="searchQuery" class="form-control w-100" placeholder="Search">
+			<div id="emailList">
+				{{ template "emailList" .}}
+			</div>
+		</div>
+		<div id="emailDetailPane" class="col d-none d-lg-block p-2" style="height: 75vh;">
+			{{ if ne .SelectedEmail.Id -1 }}
+			<div class="row border-bottom m-2 pb-2">
+				<div class="col-auto pb-2">
+					<div class="avatar border-bottom">
+						<svg xmlns="http://www.w3.org/2000/svg" width="75%" height="75%" fill="currentColor"
+							viewBox="0 0 16 16">
+							<use href="/public/images/bootstrap-icons.svg#person-fill"></use>
+						</svg>
+					</div>
+				</div>
+				<div class="col px-0 p-0">
+					<p class="fw-bold m-0 ms-2">{{ .SelectedEmail.Sender }}</p>
+					<p class="fw-normal m-0 ms-2">{{ .SelectedEmail.Description }}</p>
+				</div>
+			</div>
+			<div class="row p-3">
+				<p>{{ .SelectedEmail.Body }}</p>
+			</div>
+			{{ end }}
+		</div>
+	</div>
+</div>
+{{ end }}
+
+{{ define "emailList" }}
+{{ $root := . }}
+{{ range .Emails }}
+<button hx-get="/emails/{{ .Id }}?view={{ $root.CurrentView }}" hx-target="#emailView" class="btn 
+    {{ if eq .Id $root.SelectedEmail.Id }} btn-primary 
+       {{ else }} card
+    {{ end }} 
+    mt-2 p-2 text-start w-100 overflow-hidden">
+
+	<div class="d-flex align-items-center">
+		{{ if .Starred }}
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2"
+			viewBox="0 0 16 16">
+			<use href="/public/images/bootstrap-icons.svg#star-fill"></use>
+		</svg>
+		{{ end }}
+		<p class="fw-bold m-0">{{ .Sender }}</p>
+	</div>
+	<p class="m-0 pt-1">{{ .Description }}</p>
+	<p class="fw-lighter m-0 text-truncate text-truncate-ch">{{ .Body }}</p>
+</button>
+{{ end }}
+{{ end }}
