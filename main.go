@@ -14,12 +14,12 @@ import (
 	"time"
 )
 
-type MenuItem struct {
-	Label  string
-	Href   string
-	Icon   string // This can be an SVG or font-awesome class
-	Active bool
-}
+//type MenuItem struct {
+//	Label  string
+//	Href   string
+//	Icon   string // This can be an SVG or font-awesome class
+//	Active bool
+//}
 
 func main() {
 	// Create a channel to catch OS signals
