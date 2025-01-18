@@ -1,9 +1,18 @@
+let myChart; // Keep track of the chart instance
 let loaded = false;
+
 document.getElementById('dashboardView').addEventListener('htmx:afterSettle', (evt) => {
 	if (!loaded) {
 		loaded = true;
-		const ctx = document.getElementById('testChart').getContext('2d');
-		const myChart = new Chart(ctx, {
+
+		const testChartElement = document.getElementById('testChart');
+		if (!testChartElement) {
+			console.error("Element with ID 'testChart' not found.");
+			return;
+		}
+
+		const ctx = testChartElement.getContext('2d');
+		myChart = new Chart(ctx, {
 			type: 'line',
 			data: {
 				labels: [
@@ -38,25 +47,24 @@ document.getElementById('dashboardView').addEventListener('htmx:afterSettle', (e
 						display: false
 					},
 					tooltip: {
-						boxPadding: 3
+						padding: 10 // Update padding configuration
 					}
 				},
 				scales: {
 					x: {
 						grid: {
-							color: '#aaa', // Change grid color here
-							lineWidth: 0.25
+							color: '#aaa',
+							lineWidth: 0.5 // Increase line width for better visibility
 						}
 					},
 					y: {
 						grid: {
-							color: '#aaa', // Change grid color here
-							lineWidth: 0.25
+							color: '#aaa',
+							lineWidth: 0.5
 						}
 					}
 				}
 			}
 		});
-
 	}
-})
+});
