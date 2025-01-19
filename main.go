@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bitbucket.org/paulcrfi/htmx/app"
-	"bitbucket.org/paulcrfi/htmx/utils"
 	"context"
 	"flag"
 	"fmt"
@@ -10,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -60,37 +59,69 @@ func main() {
 	//	w.Write([]byte("<h1>TX Monitor</h1>"))
 	//})
 
-	var err error
-	funcMap := template.FuncMap{"dict": utils.Dict}
-	tmpl, err := template.New("").Funcs(funcMap).ParseGlob("web/templates/*/*")
-	if err != nil {
-		panic(err)
-	}
+	//var err error
+	//funcMap := template.FuncMap{"dict": utils.Dict}
+	//tmpl, err := template.New("").Funcs(funcMap).ParseGlob("web/templates/*/*")
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", utils.RenderTemplate(tmpl, "index.html", nil))
-	mux.HandleFunc("GET /cheatsheet", utils.RenderTemplate(tmpl, "cheatsheet.html", nil))
-	mux.HandleFunc("GET /test", utils.RenderTemplate(tmpl, "test.html", nil))
-	mux.HandleFunc("GET /docs/{doc}", utils.RenderDoc(tmpl, nil))
-	mux.Handle("GET /public/", http.StripPrefix("/public/", http.FileServer(http.Dir("web/public"))))
+	//fs := http.FileServer(http.Dir("web/static"))
 
-	email := app.EmailApp{Tmpl: tmpl}
-	email.RegisterRoutes(mux)
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
 
-	dash := app.DashboardApp{Tmpl: tmpl}
-	dash.RegisterRoutes(mux)
+	// Handle Templates dynamically
+	// mux.HandleFunc("*/template",func(){} utils.RenderTemplate(tmpl, "template.html", nil))
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/static") {
+			http.NotFound(w, r)
 
-	chat := app.ChatApp{Tmpl: tmpl}
-	chat.RegisterRoutes(mux)
+			return
+		}
 
-	search := utils.InitSearchIndex("web/templates", tmpl)
-	mux.HandleFunc("POST /search", func(w http.ResponseWriter, r *http.Request) {
-		searchInput := r.FormValue("searchInput")
-		results := search.QueryIndex(searchInput)
-		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte(results))
+		// Extract the filename name from the URL
+		templateName := strings.TrimPrefix(r.URL.Path, "/")
+		if templateName == "" {
+			templateName = "index"
+		}
+
+		templatePath := fmt.Sprintf(".web/templates/%s.tmpl", templateName)
+
+		tmpl, err := template.ParseFiles(templatePath)
+		if err != nil {
+			http.Error(w, "Template not found", http.StatusNotFound)
+
+			return
+		}
+
+		tmpl.Execute(w, nil)
 	})
+	//
+	//mux.HandleFunc("GET /base", utils.RenderTemplate(tmpl, "base.html", nil))
+	//mux.HandleFunc("GET /sidebar", utils.RenderTemplate(tmpl, "sidebar.html", nil))
+	//mux.HandleFunc("GET /cheatsheet", utils.RenderTemplate(tmpl, "cheatsheet.html", nil))
+	//mux.HandleFunc("GET /test", utils.RenderTemplate(tmpl, "test.html", nil))
+	//mux.HandleFunc("GET /docs/{doc}", utils.RenderDoc(tmpl, nil))
+	//mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
+	//
+	//email := app.EmailApp{Tmpl: tmpl}
+	//email.RegisterRoutes(mux)
+	//
+	//dash := app.DashboardApp{Tmpl: tmpl}
+	//dash.RegisterRoutes(mux)
+	//
+	//chat := app.ChatApp{Tmpl: tmpl}
+	//chat.RegisterRoutes(mux)
+	//
+	//search := utils.InitSearchIndex("web/templates", tmpl)
+	//mux.HandleFunc("POST /search", func(w http.ResponseWriter, r *http.Request) {
+	//	searchInput := r.FormValue("searchInput")
+	//	results := search.QueryIndex(searchInput)
+	//	w.Header().Set("Content-Type", "text/html")
+	//	w.Write([]byte(results))
+	//})
 
 	// Create an HTTP server instance
 	server := &http.Server{
