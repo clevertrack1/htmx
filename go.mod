@@ -1,10 +1,13 @@
-module bitbucket.org/paulcrfi/htmx
+module github.com/clevertrack1/htmx
 
 go 1.24.3
 
 toolchain go1.24.4
 
-require github.com/blevesearch/bleve/v2 v2.4.4
+require (
+	github.com/blevesearch/bleve/v2 v2.4.4
+	github.com/clevertrack1/mach v0.0.0-20260317035331-4f731672ad01
+)
 
 require (
 	github.com/RoaringBitmap/roaring v1.9.3 // indirect
@@ -26,7 +29,6 @@ require (
 	github.com/blevesearch/zapx/v14 v14.3.10 // indirect
 	github.com/blevesearch/zapx/v15 v15.3.16 // indirect
 	github.com/blevesearch/zapx/v16 v16.1.9-0.20241217210638-a0519e7caf3b // indirect
-	github.com/clevertrack1/mach v0.0.0-20260317035331-4f731672ad01 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551 // indirect
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect

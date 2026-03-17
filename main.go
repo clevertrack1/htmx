@@ -1,15 +1,16 @@
 package main
 
 import (
-	"bitbucket.org/paulcrfi/htmx/utils"
-	"bitbucket.org/paulcrfi/htmx/web/app"
 	"flag"
 	"fmt"
-	"github.com/clevertrack1/mach"
 	"html/template"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/clevertrack1/htmx/utils"
+	"github.com/clevertrack1/htmx/web/app"
+	"github.com/clevertrack1/mach"
 )
 
 func main() {
@@ -28,21 +29,22 @@ func main() {
 	appInstance.Static("/static/", "./web/static")
 
 	appInstance.GET("/", func(c *mach.Context) {
-		// Extract the filename name from the URL
+		// Extract the template name from the URL
 		templateName := strings.TrimPrefix(c.Path(), "/")
 		if templateName == "" {
-			templateName = "index"
+			templateName = "index.tmpl"
+		} else {
+			// Append .tmpl if not present
+			if !strings.HasSuffix(templateName, ".tmpl") && !strings.HasSuffix(templateName, ".html") {
+				templateName += ".tmpl"
+			}
 		}
 
-		templatePath := fmt.Sprintf("./web/templates/views/%s.tmpl", templateName)
-
-		t, err := template.ParseFiles(templatePath)
+		err := tmpl.ExecuteTemplate(c.Response, templateName, nil)
 		if err != nil {
 			c.NoContent(http.StatusNotFound)
 			return
 		}
-
-		t.Execute(c.Response, nil)
 	})
 
 	// Register App routes
