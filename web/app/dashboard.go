@@ -2,22 +2,22 @@ package app
 
 import (
 	"fmt"
+	"github.com/clevertrack1/mach"
 	"html/template"
 	"math/rand"
-	"net/http"
 )
 
 type DashboardApp struct {
 	Tmpl *template.Template
 }
 
-func (d *DashboardApp) RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /dashboard", d.renderDashboard)
-	mux.HandleFunc("GET /prices", d.renderPrices)
+func (d *DashboardApp) RegisterRoutes(app *mach.App) {
+	app.GET("/dashboard", d.renderDashboard)
+	app.GET("/prices", d.renderPrices)
 }
 
-func (d *DashboardApp) renderDashboard(w http.ResponseWriter, r *http.Request) {
-	d.Tmpl.ExecuteTemplate(w, "dashboard", nil)
+func (d *DashboardApp) renderDashboard(c *mach.Context) {
+	d.Tmpl.ExecuteTemplate(c.Response, "dashboard", nil)
 }
 
 type PricesRender struct {
@@ -26,13 +26,13 @@ type PricesRender struct {
 	ZEC string
 }
 
-func (d *DashboardApp) renderPrices(w http.ResponseWriter, r *http.Request) {
+func (d *DashboardApp) renderPrices(c *mach.Context) {
 	data := PricesRender{
 		BTC: getBTC(),
 		ETH: getETH(),
 		ZEC: getZEC(),
 	}
-	d.Tmpl.ExecuteTemplate(w, "prices", data)
+	d.Tmpl.ExecuteTemplate(c.Response, "prices", data)
 }
 
 func getBTC() string {

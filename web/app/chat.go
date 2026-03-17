@@ -1,21 +1,21 @@
 package app
 
 import (
+	"github.com/clevertrack1/mach"
 	"html/template"
-	"net/http"
 )
 
 type ChatApp struct {
 	Tmpl *template.Template
 }
 
-func (c *ChatApp) RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /chat", c.renderChat)
-	mux.HandleFunc("POST /chat", c.handleChat)
+func (c *ChatApp) RegisterRoutes(app *mach.App) {
+	app.GET("/chat", c.renderChat)
+	app.POST("/chat", c.handleChat)
 }
 
-func (c *ChatApp) renderChat(w http.ResponseWriter, r *http.Request) {
-	c.Tmpl.ExecuteTemplate(w, "chat", nil)
+func (c *ChatApp) renderChat(ctx *mach.Context) {
+	c.Tmpl.ExecuteTemplate(ctx.Response, "chat", nil)
 }
 
 type ResponseRender struct {
@@ -23,8 +23,8 @@ type ResponseRender struct {
 	AssistantMsg string
 }
 
-func (c *ChatApp) handleChat(w http.ResponseWriter, r *http.Request) {
-	userMsg := r.FormValue("user-message")
+func (c *ChatApp) handleChat(ctx *mach.Context) {
+	userMsg := ctx.Request.FormValue("user-message")
 	assistantMsg := `
 		This is a placeholder response for an AI chat app.
 		Connect your AI API to create your own app.
@@ -33,5 +33,5 @@ func (c *ChatApp) handleChat(w http.ResponseWriter, r *http.Request) {
 		UserMsg:      userMsg,
 		AssistantMsg: assistantMsg,
 	}
-	c.Tmpl.ExecuteTemplate(w, "chatresponse", data)
+	c.Tmpl.ExecuteTemplate(ctx.Response, "chatresponse", data)
 }

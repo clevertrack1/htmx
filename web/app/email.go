@@ -3,6 +3,7 @@ package app
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"github.com/clevertrack1/mach"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -35,19 +36,19 @@ type EmailRender struct {
 	CurrentView   string
 }
 
-func (a *EmailApp) RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /emails", a.renderEmails)
-	mux.HandleFunc("GET /emails/{id}", a.renderEmail)
-	mux.HandleFunc("POST /emails/{id}/star", a.starEmail)
-	mux.HandleFunc("POST /emails/{id}/archive", a.archiveEmail)
-	mux.HandleFunc("POST /emails/search", a.searchEmails)
+func (a *EmailApp) RegisterRoutes(app *mach.App) {
+	app.GET("/emails", a.renderEmails)
+	app.GET("/emails/{id}", a.renderEmail)
+	app.POST("/emails/{id}/star", a.starEmail)
+	app.POST("/emails/{id}/archive", a.archiveEmail)
+	app.POST("/emails/search", a.searchEmails)
 }
 
 // renderEmails adapts to the requested view (inbox, archived, starred).
-func (a *EmailApp) renderEmails(w http.ResponseWriter, r *http.Request) {
-	s := ensureSession(w, r)
+func (a *EmailApp) renderEmails(c *mach.Context) {
+	s := ensureSession(c.Response, c.Request)
 
-	view := r.URL.Query().Get("view") // e.g. "archived" or "starred"
+	view := c.Request.URL.Query().Get("view") // e.g. "archived" or "starred"
 
 	var visibleEmails []Email
 	switch view {
@@ -71,26 +72,26 @@ func (a *EmailApp) renderEmails(w http.ResponseWriter, r *http.Request) {
 	if len(visibleEmails) > 0 {
 		data.SelectedEmail = visibleEmails[0]
 	}
-	a.Tmpl.ExecuteTemplate(w, "emailview", data)
+	a.Tmpl.ExecuteTemplate(c.Response, "emailview", data)
 }
 
-func (a *EmailApp) renderEmail(w http.ResponseWriter, r *http.Request) {
-	s := ensureSession(w, r)
+func (a *EmailApp) renderEmail(c *mach.Context) {
+	s := ensureSession(c.Response, c.Request)
 
-	uniqueID, err := strconv.Atoi(r.PathValue("id"))
+	uniqueID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
+		http.Error(c.Response, "Invalid id parameter", http.StatusBadRequest)
 		return
 	}
 
 	emailPtr := findEmailByID(s.Emails, uniqueID)
 	if emailPtr == nil {
-		http.Error(w, "Email not found", http.StatusNotFound)
+		http.Error(c.Response, "Email not found", http.StatusNotFound)
 		return
 	}
 
 	// Just assume we want to keep the same `view` as on the listing page:
-	view := r.URL.Query().Get("view")
+	view := c.Request.URL.Query().Get("view")
 	if view == "" {
 		view = "inbox" // fallback
 	}
@@ -112,26 +113,26 @@ func (a *EmailApp) renderEmail(w http.ResponseWriter, r *http.Request) {
 		SelectedEmail: *emailPtr,
 		CurrentView:   view,
 	}
-	a.Tmpl.ExecuteTemplate(w, "emailview", data)
+	a.Tmpl.ExecuteTemplate(c.Response, "emailview", data)
 }
 
-func (a *EmailApp) starEmail(w http.ResponseWriter, r *http.Request) {
-	s := ensureSession(w, r)
-	uniqueID, err := strconv.Atoi(r.PathValue("id"))
+func (a *EmailApp) starEmail(c *mach.Context) {
+	s := ensureSession(c.Response, c.Request)
+	uniqueID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
+		http.Error(c.Response, "Invalid id parameter", http.StatusBadRequest)
 		return
 	}
 
 	emailPtr := findEmailByID(s.Emails, uniqueID)
 	if emailPtr == nil {
-		http.Error(w, "Email not found", http.StatusNotFound)
+		http.Error(c.Response, "Email not found", http.StatusNotFound)
 		return
 	}
 	emailPtr.Starred = !emailPtr.Starred
 
 	// Rerender with the same 'view' param, e.g. ?view=starred
-	view := r.URL.Query().Get("view")
+	view := c.Request.URL.Query().Get("view")
 	var visibleEmails []Email
 	switch view {
 	case "archived":
@@ -156,25 +157,25 @@ func (a *EmailApp) starEmail(w http.ResponseWriter, r *http.Request) {
 		SelectedEmail: selected,
 		CurrentView:   view,
 	}
-	a.Tmpl.ExecuteTemplate(w, "emailview", data)
+	a.Tmpl.ExecuteTemplate(c.Response, "emailview", data)
 }
 
-func (a *EmailApp) archiveEmail(w http.ResponseWriter, r *http.Request) {
-	s := ensureSession(w, r)
-	uniqueID, err := strconv.Atoi(r.PathValue("id"))
+func (a *EmailApp) archiveEmail(c *mach.Context) {
+	s := ensureSession(c.Response, c.Request)
+	uniqueID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
+		http.Error(c.Response, "Invalid id parameter", http.StatusBadRequest)
 		return
 	}
 
 	emailPtr := findEmailByID(s.Emails, uniqueID)
 	if emailPtr == nil {
-		http.Error(w, "Email not found", http.StatusNotFound)
+		http.Error(c.Response, "Email not found", http.StatusNotFound)
 		return
 	}
 	emailPtr.Archived = !emailPtr.Archived
 
-	view := r.URL.Query().Get("view")
+	view := c.Request.URL.Query().Get("view")
 	var visibleEmails []Email
 	switch view {
 	case "archived":
@@ -195,16 +196,16 @@ func (a *EmailApp) archiveEmail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := EmailRender{Emails: visibleEmails, SelectedEmail: selected, CurrentView: view}
-	a.Tmpl.ExecuteTemplate(w, "emailview", data)
+	a.Tmpl.ExecuteTemplate(c.Response, "emailview", data)
 }
 
-func (a *EmailApp) searchEmails(w http.ResponseWriter, r *http.Request) {
-	s := ensureSession(w, r)
+func (a *EmailApp) searchEmails(c *mach.Context) {
+	s := ensureSession(c.Response, c.Request)
 
 	// Grab the query from form data. If you name the field "q" in the <input>, use FormValue("q").
-	searchTerm := r.FormValue("searchQuery")
+	searchTerm := c.Request.FormValue("searchQuery")
 
-	view := r.URL.Query().Get("view")
+	view := c.Request.URL.Query().Get("view")
 	var visibleEmails []Email
 	switch view {
 	case "archived":
@@ -227,7 +228,7 @@ func (a *EmailApp) searchEmails(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Execute ONLY the sub-template that lists emails, without the entire layout
-	a.Tmpl.ExecuteTemplate(w, "emailList", data)
+	a.Tmpl.ExecuteTemplate(c.Response, "emailList", data)
 }
 
 // Utility helpers:
